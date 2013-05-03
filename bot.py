@@ -91,12 +91,15 @@ i18n['en']['gethistory']='%s'
 def gethistoryHandler(user,command,args,mess):
     if not forum_use.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
     msg=Send2Chat('',18,forum_use[user.getStripped()])
-    parser = MyHTMLParser()
+    parser=MyHTMLParser()
     parser.feed( msg.split('|:|')[0])
     last_id=int(msg.split('|:|')[2])
-    count_h=args and (int(args)>19 and 19 or int(args)-1) or 4 
-    msg_hist=parser.get_data().split(str(last_id-count_h).zfill(9)+":|:")[1]
-    for i in range(last_id-count_h,last_id+1):
+    try:
+	count_h=args and (int(args)>19 and 20 or (int(args)<1 and 1 or int(args))) or 5 
+    except:
+	count_h=5
+    msg_hist=parser.get_data().split(str(last_id-count_h+1).zfill(9)+":|:")[1]
+    for i in range(last_id-count_h+1,last_id+1):
 	msg_hist=msg_hist.replace(str(i).zfill(9)+":|:","\n")
     return "gethistory",'%s'%msg_hist
 

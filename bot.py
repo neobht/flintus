@@ -1,6 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # $Id: bot.py,v 1.2 2006/10/06 12:30:42 normanr Exp $
+#
+
+##
+##	Description: Flintus - Chat/XMPP bot
+##
+##	Author: Anton Goroshkin <antihaos@gmail.com> http://magos-linux.ru
+##	Copyright (C) 2013 neobht
+
+
 import sys,os,json
 import xmpp
 import httplib, urllib, xml
@@ -15,14 +24,12 @@ class MyHTMLParser(HTMLParser):
 	self.flag=True
     def handle_endtag(self, tag):
 	self.flag=False
-        #print "Encountered an end tag :", tag
     def handle_data(self, data):
-        #if self.flag:
     	self.fed.append(data)
     def get_data(self):
         return ''.join(self.fed)
 
-
+###  Взаимодействие с чатом Blab
 def Send2Chat(msg,clr,forum):
     headers = {"Content-type": "application/x-www-form-urlencoded"}
     server={}
@@ -40,7 +47,7 @@ def Send2Chat(msg,clr,forum):
     return data
     conn.close()
 
-
+###  Глобальные переменные
 params={}
 params_file_name="config_params"
 
@@ -63,6 +70,7 @@ online_jab={}
 
 commands={}
 i18n={'ru':{},'en':{}}
+
 ########################### user handlers start ##################################
 i18n['ru']['Помощь']="Доступные команды: %s\n\nОписание команд:%s"
 def helpHandler(user,command,args,mess):

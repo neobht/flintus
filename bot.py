@@ -188,7 +188,7 @@ def messageCB(conn,mess):
             try: reply=i18n['en'][reply]
             except KeyError: pass
     if reply:
-	conn.send(xmpp.Message(mess.getFrom(),reply))
+	conn.send(xmpp.Message(mess.getFrom(),reply,'chat'))
 
 for i in globals().keys():
     if i[-7:]=='Handler' and i[:-7].lower()==i[:-7]: commands[i[:-7]]=globals()[i]
@@ -224,7 +224,7 @@ def StepOn(conn):
 		if (old_msg[forum_use[users]] != msg_chat[forum_use[users]]):
 		#and    ("Flintus:" not in msg_chat[forum_use[users]]):
 		    conn.Roster.Authorize(to_users[users])
-		    conn.send(xmpp.protocol.Message(to_users[users], msg_chat[forum_use[users]]))
+		    conn.send(xmpp.protocol.Message(to_users[users], msg_chat[forum_use[users]],'chat'))
 
 #Эхо между форумами
 #	if (old_msg[forum_magos] != msg_chat[forum_magos]) and ('Flintus:' not in msg_chat[forum_magos]) and echo:

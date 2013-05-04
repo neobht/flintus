@@ -153,7 +153,6 @@ i18n['en']['bash']='%s'
 def bashHandler(user,command,args,mess):
     feed=feedparser.parse("http://bash.im/rss")
     try:
-	print len(feed['items'])
 	bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
     except:
 	bash_body="упс... ошибочка вышла!"
@@ -238,7 +237,37 @@ def StepOn(conn):
 		    conn.Roster.Authorize(to_users[users])
 		    conn.send(xmpp.protocol.Message(to_users[users], msg_chat[forum_use[users]],'chat'))
 
-#Эхо между форумами
+#Обработчик для чата
+	if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
+	    feed=feedparser.parse("http://bash.im/rss")
+	    try:
+		try:
+		    args=msg_chat[forum_magos].split(" ")[5]
+		except:
+		    args="0"
+		bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+	    except:
+		bash_body=u"упс... ошибочка вышла!"
+		pass
+	    Send2Chat(bash_body,18,forum_magos)
+	
+	# надо оптимизировать код
+	if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
+	    feed=feedparser.parse("http://bash.im/rss")
+	    try:
+		try:
+		    args=msg_chat[forum_mageia].split(" ")[5]
+		except:
+		    args="0"
+		bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+	    except:
+		bash_body=u"упс... ошибочка вышла!"
+		pass
+	    Send2Chat(bash_body,18,forum_mageia)
+
+
+
+#Эхо между чатами
 #	if (old_msg[forum_magos] != msg_chat[forum_magos]) and ('Flintus:' not in msg_chat[forum_magos]) and echo:
 #	    Send2Chat("MagOS Forum "+msg_chat[forum_magos],18,forum_mageia)
 #	if (old_msg[forum_mageia] != msg_chat[forum_mageia]) and ('Flintus:' not in msg_chat[forum_mageia]) and echo:

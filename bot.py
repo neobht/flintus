@@ -158,6 +158,11 @@ def bashHandler(user,command,args,mess):
         bash_body="упс... ошибочка вышла!"
         pass
     return "bash",bash_body
+i18n['en']['system']='%s'
+def systemHandler(user,command,args,mess):
+    if args == params['system']['shutdown']:
+        sys.exit()
+    return "system",u"упс... ошибочка!"
 
 ########################### user handlers stop ###################################
 ############################ bot logic start #####################################

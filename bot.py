@@ -11,7 +11,7 @@
 
 
 import sys,os,json
-import xmpp
+import xmpp,feedparser
 import httplib, urllib, xml
 from HTMLParser import HTMLParser
 
@@ -79,6 +79,7 @@ follow magos/mageia - включить отслеживание форума
 unfollow - отключить отслеживание
 gethistory 1-20  - показать историю последних сообщений
 online - показать пользователей online
+bash 0-99 - показать последнюю 0-99 цитату с http://bash.im 
 help - справка по командам
     '''
 
@@ -147,6 +148,17 @@ def emptyHandler(user,command,args,mess):
     if forum_use.has_key(user.getStripped()):
 	Send2Chat(user.getStripped()+" "+command+" "+args,18,forum_use[user.getStripped()])
     return "empty"
+
+i18n['en']['bash']='%s'
+def bashHandler(user,command,args,mess):
+    feed=feedparser.parse("http://bash.im/rss")
+    try:
+	print len(feed['items'])
+	bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+    except:
+	bash_body="упс... ошибочка вышла!"
+	pass
+    return "bash",bash_body
 
 ########################### user handlers stop ###################################
 ############################ bot logic start #####################################

@@ -12,7 +12,7 @@
 
 import sys,os,json
 import xmpp,feedparser
-import httplib, urllib, xml
+import httplib, urllib
 from HTMLParser import HTMLParser
 
 class MyHTMLParser(HTMLParser):

@@ -157,7 +157,7 @@ def bashHandler(user,command,args,mess):
     except:
         bash_body="упс... ошибочка вышла!"
         pass
-    return "bash",bash_body
+    return "bash",bash_body.replace("<br />","\n")
 i18n['en']['system']='%s'
 def systemHandler(user,command,args,mess):
     if args == params['system']['shutdown']:
@@ -255,7 +255,7 @@ def StepOn(conn):
             except:
                 bash_body=u"упс... ошибочка вышла!"
                 pass
-            Send2Chat(bash_body,18,forum_magos)
+            Send2Chat(bash_body.replace("<br />","\n"),18,forum_magos)
 
     # надо оптимизировать код
         if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
@@ -269,7 +269,7 @@ def StepOn(conn):
             except:
                 bash_body=u"упс... ошибочка вышла!"
                 pass
-            Send2Chat(bash_body,18,forum_mageia)
+            Send2Chat(bash_body.replace("<br />","\n"),18,forum_mageia)
 
 
 

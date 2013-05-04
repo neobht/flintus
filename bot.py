@@ -4,10 +4,10 @@
 #
 
 ##
-##	Description: Flintus - Chat/XMPP bot
+##  Description: Flintus - Chat/XMPP bot
 ##
-##	Author: Anton Goroshkin <antihaos@gmail.com> http://magos-linux.ru
-##	Copyright (C) 2013 neobht
+##  Author: Anton Goroshkin <antihaos@gmail.com> http://magos-linux.ru
+##  Copyright (C) 2013 neobht
 
 
 import sys,os,json
@@ -21,11 +21,11 @@ class MyHTMLParser(HTMLParser):
         self.fed = []
         self.flag=False
     def handle_starttag(self, tag, attrs):
-	self.flag=True
+        self.flag=True
     def handle_endtag(self, tag):
-	self.flag=False
+        self.flag=False
     def handle_data(self, data):
-    	self.fed.append(data)
+        self.fed.append(data)
     def get_data(self):
         return ''.join(self.fed)
 
@@ -79,7 +79,7 @@ follow magos/mageia - включить отслеживание форума
 unfollow - отключить отслеживание
 gethistory 1-20  - показать историю последних сообщений
 online - показать пользователей online
-bash 0-99 - показать последнюю 0-99 цитату с http://bash.im 
+bash 0-99 - показать последнюю 0-99 цитату с http://bash.im
 help - справка по командам
     '''
 
@@ -96,12 +96,12 @@ def gethistoryHandler(user,command,args,mess):
     parser.feed( msg.split('|:|')[0])
     last_id=int(msg.split('|:|')[2])
     try:
-	count_h=args and (int(args)>19 and 20 or (int(args)<1 and 1 or int(args))) or 5 
+        count_h=args and (int(args)>19 and 20 or (int(args)<1 and 1 or int(args))) or 5
     except:
-	count_h=5
+        count_h=5
     msg_hist=parser.get_data().split(str(last_id-count_h+1).zfill(9)+":|:")[1]
     for i in range(last_id-count_h+1,last_id+1):
-	msg_hist=msg_hist.replace(str(i).zfill(9)+":|:","\n")
+        msg_hist=msg_hist.replace(str(i).zfill(9)+":|:","\n")
     return "gethistory",'%s'%msg_hist
 
 i18n['en']['send']='--> online jabber users:\n%s\n\n-->online chat users:\n%s'
@@ -114,7 +114,7 @@ def onlineHandler(user,command,args,mess):
 
     online_ret=""
     for online in online_jab:
-	online_ret=online_ret+online+"("+online_jab[online]+"), "
+        online_ret=online_ret+online+"("+online_jab[online]+"), "
 
     return "send",(online_ret,online_chat)
 
@@ -146,17 +146,17 @@ def unfollowHandler(user,command,args,mess):
 i18n['en']['empty']='--> отправлено'
 def emptyHandler(user,command,args,mess):
     if forum_use.has_key(user.getStripped()):
-	Send2Chat(user.getStripped()+" "+command+" "+args,18,forum_use[user.getStripped()])
+        Send2Chat(user.getStripped()+" "+command+" "+args,18,forum_use[user.getStripped()])
     return "empty"
 
 i18n['en']['bash']='%s'
 def bashHandler(user,command,args,mess):
     feed=feedparser.parse("http://bash.im/rss")
     try:
-	bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+        bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
     except:
-	bash_body="упс... ошибочка вышла!"
-	pass
+        bash_body="упс... ошибочка вышла!"
+        pass
     return "bash",bash_body
 
 ########################### user handlers stop ###################################
@@ -175,11 +175,12 @@ def messageCB(conn,mess):
     cmd=command.lower()
 
     if commands.has_key(cmd):
-	reply=commands[cmd](user,command,args,mess)
+        reply=commands[cmd](user,command,args,mess)
     else:
-	if to_users.has_key(user.getStripped()):
-	    if to_users[user.getStripped()] : reply=commands['empty'](user,command,args,mess)
-	else: reply=("UNKNOWN COMMAND",cmd)
+        if to_users.has_key(user.getStripped()):
+            if to_users[user.getStripped()] :
+                reply=commands['empty'](user,command,args,mess)
+            else: reply=("UNKNOWN COMMAND",cmd)
 
     if type(reply)==type(()):
         key,args=reply
@@ -187,10 +188,10 @@ def messageCB(conn,mess):
         elif i18n['en'].has_key(key): pat=i18n['en'][key]
         else: pat="%s"
         if type(pat)==type(''):
-    	    if  isinstance(args, unicode):
-    		reply=pat%args.encode('utf-8')
-    	    else:
-    		reply=pat%args
+            if  isinstance(args, unicode):
+                reply=pat%args.encode('utf-8')
+            else:
+                reply=pat%args
 
         else: reply=pat(**args)
     else:
@@ -199,7 +200,7 @@ def messageCB(conn,mess):
             try: reply=i18n['en'][reply]
             except KeyError: pass
     if reply:
-	conn.send(xmpp.Message(mess.getFrom(),reply,'chat'))
+        conn.send(xmpp.Message(mess.getFrom(),reply,'chat'))
 
 for i in globals().keys():
     if i[-7:]=='Handler' and i[:-7].lower()==i[:-7]: commands[i[:-7]]=globals()[i]
@@ -212,69 +213,69 @@ def StepOn(conn):
 
         #Основной код
 
-	msg=Send2Chat('',18,forum_magos)
-	parser = MyHTMLParser()
-	parser.feed( msg.split('|:|')[0])
-	msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-	msg=Send2Chat('',18,forum_mageia)
-	parser = MyHTMLParser()
-	parser.feed( msg.split('|:|')[0])
-	msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-	
-	#TODO: надо переделать как-то получше этот кусок
-	for k in online_jab:
-	    online_jab[k]=""
+        msg=Send2Chat('',18,forum_magos)
+        parser = MyHTMLParser()
+        parser.feed( msg.split('|:|')[0])
+        msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+        msg=Send2Chat('',18,forum_mageia)
+        parser = MyHTMLParser()
+        parser.feed( msg.split('|:|')[0])
+        msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
 
-	for jid in conn.Roster.getItems():
-	    for resources in conn.Roster.getResources(jid):
-		jid_full="%s/%s"%(jid,resources)
-		online_jab[jid]=str(conn.Roster.getShow(jid_full)==None and "online" or conn.Roster.getShow(jid_full))
-	
-	for users in to_users:
-	    if forum_use.has_key(users):
-		if (old_msg[forum_use[users]] != msg_chat[forum_use[users]]):
-		#and    ("Flintus:" not in msg_chat[forum_use[users]]):
-		    conn.Roster.Authorize(to_users[users])
-		    conn.send(xmpp.protocol.Message(to_users[users], msg_chat[forum_use[users]],'chat'))
+    #TODO: надо переделать как-то получше этот кусок
+        for k in online_jab:
+            online_jab[k]=""
+
+        for jid in conn.Roster.getItems():
+            for resources in conn.Roster.getResources(jid):
+                jid_full="%s/%s"%(jid,resources)
+                online_jab[jid]=str(conn.Roster.getShow(jid_full)==None and "online" or conn.Roster.getShow(jid_full))
+
+        for users in to_users:
+            if forum_use.has_key(users):
+                if (old_msg[forum_use[users]] != msg_chat[forum_use[users]]):
+                #and    ("Flintus:" not in msg_chat[forum_use[users]]):
+                    conn.Roster.Authorize(to_users[users])
+                    conn.send(xmpp.protocol.Message(to_users[users], msg_chat[forum_use[users]],'chat'))
 
 #Обработчик для чата
-	if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
-	    feed=feedparser.parse("http://bash.im/rss")
-	    try:
-		try:
-		    args=msg_chat[forum_magos].split(" ")[5]
-		except:
-		    args="0"
-		bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
-	    except:
-		bash_body=u"упс... ошибочка вышла!"
-		pass
-	    Send2Chat(bash_body,18,forum_magos)
-	
-	# надо оптимизировать код
-	if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
-	    feed=feedparser.parse("http://bash.im/rss")
-	    try:
-		try:
-		    args=msg_chat[forum_mageia].split(" ")[5]
-		except:
-		    args="0"
-		bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
-	    except:
-		bash_body=u"упс... ошибочка вышла!"
-		pass
-	    Send2Chat(bash_body,18,forum_mageia)
+        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
+            feed=feedparser.parse("http://bash.im/rss")
+            try:
+                try:
+                    args=msg_chat[forum_magos].split(" ")[5]
+                except:
+                    args="0"
+                bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+            except:
+                bash_body=u"упс... ошибочка вышла!"
+                pass
+            Send2Chat(bash_body,18,forum_magos)
+
+    # надо оптимизировать код
+        if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
+            feed=feedparser.parse("http://bash.im/rss")
+            try:
+                try:
+                    args=msg_chat[forum_mageia].split(" ")[5]
+                except:
+                    args="0"
+                bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+            except:
+                bash_body=u"упс... ошибочка вышла!"
+                pass
+            Send2Chat(bash_body,18,forum_mageia)
 
 
 
 #Эхо между чатами
-#	if (old_msg[forum_magos] != msg_chat[forum_magos]) and ('Flintus:' not in msg_chat[forum_magos]) and echo:
-#	    Send2Chat("MagOS Forum "+msg_chat[forum_magos],18,forum_mageia)
-#	if (old_msg[forum_mageia] != msg_chat[forum_mageia]) and ('Flintus:' not in msg_chat[forum_mageia]) and echo:
-#	    Send2Chat("MRC Forum "+msg_chat[forum_mageia],18,forum_magos)
+#   if (old_msg[forum_magos] != msg_chat[forum_magos]) and ('Flintus:' not in msg_chat[forum_magos]) and echo:
+#       Send2Chat("MagOS Forum "+msg_chat[forum_magos],18,forum_mageia)
+#   if (old_msg[forum_mageia] != msg_chat[forum_mageia]) and ('Flintus:' not in msg_chat[forum_mageia]) and echo:
+#       Send2Chat("MRC Forum "+msg_chat[forum_mageia],18,forum_magos)
 
-	old_msg[forum_magos]=msg_chat[forum_magos]
-	old_msg[forum_mageia]=msg_chat[forum_mageia]
+        old_msg[forum_magos]=msg_chat[forum_magos]
+        old_msg[forum_mageia]=msg_chat[forum_mageia]
 
     except KeyboardInterrupt: return 0
     return 1
@@ -282,6 +283,7 @@ def StepOn(conn):
 def GoOn(conn):
     while StepOn(conn): pass
 
+#Main program
 if len(sys.argv)<3:
     print "Usage: bot.py username@server.net password"
 else:
@@ -306,21 +308,21 @@ else:
     print "Bot started."
     if os.path.isfile(pref_file_name1):
         with open(pref_file_name1, 'r') as pref_file:
-            try: 
-        	forum_use = json.load(pref_file)
-    	    except:
-    		pass
-        	
+            try:
+                forum_use = json.load(pref_file)
+            except:
+                pass
+
     if os.path.isfile(pref_file_name2):
         with open(pref_file_name2, 'r') as pref_file:
-            try: 
-        	to_users = json.load(pref_file)
-    	    except:
-    		pass
+            try:
+                to_users = json.load(pref_file)
+            except:
+                pass
     if os.path.isfile(params_file_name):
         with open(params_file_name, 'r') as params_file:
-            try: 
-        	params = json.load(params_file)
-    	    except:
-    		pass
+            try:
+                params = json.load(params_file)
+            except:
+                pass
     GoOn(conn)

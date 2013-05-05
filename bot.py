@@ -118,8 +118,10 @@ def onlineHandler(user,command,args,mess):
 
     return "send",(online_ret,online_chat)
 
+i18n['en']['error']=u'-->упс... ошибочка!'
 i18n['en']['follow']='-->ok'
 def followHandler(user,command,args,mess):
+    if args not in ["magos","mageia"]: return "error"
     to_users[user.getStripped()]=user.getStripped()
     forum_use[user.getStripped()]=args
     if os.path.isfile(pref_file_name1):
@@ -182,6 +184,7 @@ def messageCB(conn,mess):
     if commands.has_key(cmd):
         reply=commands[cmd](user,command,args,mess)
     else:
+        reply=("UNKNOWN COMMAND",cmd)
         if to_users.has_key(user.getStripped()):
             if to_users[user.getStripped()] :
                 reply=commands['empty'](user,command,args,mess)

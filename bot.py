@@ -57,6 +57,7 @@ forum_mageia="mageia"
 
 old_msg={}
 msg_chat={}
+old_msg_users={}
 
 old_msg[forum_magos]=""
 msg_chat[forum_magos]=""
@@ -164,11 +165,11 @@ def unfollowHandler(user,command,args,mess):
             json.dump(users_params,pref_file)
     return "unfollow"
 
-i18n['en']['empty']='--> отправлено'
+i18n['en']['empty']=''
 def emptyHandler(user,command,args,mess):
     if users_params.has_key(user.getStripped()):
         Send2Chat(user.getStripped()+" "+command+" "+args,18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
-#    return "empty"
+    return "empty"
 
 i18n['en']['bash']='%s'
 def bashHandler(user,command,args,mess):
@@ -219,7 +220,6 @@ def messageCB(conn,mess):
         if users_params.has_key(user.getStripped()):
             if users_params[user.getStripped()]['jid'] :
                 reply=commands['empty'](user,command,args,mess)
-            else: reply=("UNKNOWN COMMAND",cmd)
 
     if type(reply)==type(()):
         key,args=reply
@@ -262,8 +262,8 @@ def StepOn(conn):
         msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
 
     #TODO: надо переделать как-то получше этот кусок
-        for k in online_jab:
-            online_jab[k]=""
+	for k in online_jab:
+		online_jab[k]=""
 
         for jid in conn.Roster.getItems():
             for resources in conn.Roster.getResources(jid):
@@ -271,20 +271,22 @@ def StepOn(conn):
                 online_jab[jid]=str(conn.Roster.getShow(jid_full)==None and "online" or conn.Roster.getShow(jid_full))
 
         for users in users_params:
-            msg=Send2Chat('',18,forum_magos,users_params[users]['tfrm'])
+            msg=Send2Chat('',18,users_params[users]['forum'],users_params[users]['tfrm'])
             parser = MyHTMLParser()
             parser.feed( msg.split('|:|')[0])
-            msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-            msg=Send2Chat('',18,forum_mageia,users_params[users]['tfrm'])
-            parser = MyHTMLParser()
-            parser.feed( msg.split('|:|')[0])
-            msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+	    msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
 
-            if (old_msg[users_params[users]['forum']] != msg_chat[users_params[users]['forum']]):
+	    if old_msg_users.has_key(users):
+		if old_msg_users[users].has_key(users_params[users]['forum']):
+            		if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
-                    conn.Roster.Authorize(users_params[users]['jid'])
-                    conn.Roster.Subscribe(users_params[users]['jid'])
-                    conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat[users_params[users]['forum']],'chat'))
+                    		conn.Roster.Authorize(users_params[users]['jid'])
+                    		conn.Roster.Subscribe(users_params[users]['jid'])
+                    		conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
+	    else:
+		old_msg_users[users]={}
+	    
+	    old_msg_users[users][users_params[users]['forum']]=msg_chat_users
 
 #Обработчик для чата
         if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):

@@ -1,5 +1,6 @@
 *.pyc
+*~
 config_params
 to_users
 forum_use
-
+users_params

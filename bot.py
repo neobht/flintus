@@ -30,7 +30,7 @@ class MyHTMLParser(HTMLParser):
         return ''.join(self.fed)
 
 ###  Взаимодействие с чатом Blab
-def Send2Chat(msg,clr,forum):
+def Send2Chat(msg,clr,forum,tfrm="3"):
     headers = {"Content-type": "application/x-www-form-urlencoded"}
     server={}
     server['magos']="chat.magos-linux.ru"
@@ -38,6 +38,7 @@ def Send2Chat(msg,clr,forum):
 
     params[forum]['cp']=msg.encode('utf-8')
     params[forum]['txt_c']=clr
+    params[forum]['tfrm']=tfrm
 
     conn = httplib.HTTPConnection(server[forum])
     conn.request("POST", "/ajb.php", urllib.urlencode(params[forum]), headers)
@@ -62,10 +63,12 @@ msg_chat[forum_magos]=""
 old_msg[forum_mageia]=""
 msg_chat[forum_mageia]=""
 
-to_users={}
-forum_use={}
-pref_file_name1="forum_use"
-pref_file_name2="to_users"
+#to_users={}
+#forum_use={}
+#pref_file_name1="forum_use"
+#pref_file_name2="to_users"
+users_params={}
+pref_file_name="users_params"
 online_jab={}
 
 commands={}
@@ -90,8 +93,8 @@ help - справка по командам
 
 i18n['en']['gethistory']='%s'
 def gethistoryHandler(user,command,args,mess):
-    if not forum_use.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
-    msg=Send2Chat('',18,forum_use[user.getStripped()])
+    if not users_params.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
+    msg=Send2Chat('',18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
     parser=MyHTMLParser()
     parser.feed( msg.split('|:|')[0])
     last_id=int(msg.split('|:|')[2])
@@ -106,8 +109,8 @@ def gethistoryHandler(user,command,args,mess):
 
 i18n['en']['send']='--> online jabber users:\n%s\n\n-->online chat users:\n%s'
 def onlineHandler(user,command,args,mess):
-    if not forum_use.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
-    msg=Send2Chat('',18,forum_use[user.getStripped()])
+    if not users_params.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
+    msg=Send2Chat('',18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
     parser = MyHTMLParser()
     parser.feed( msg.split('|:|')[1])
     online_chat=parser.get_data()
@@ -122,34 +125,50 @@ i18n['en']['error']=u'-->упс... ошибочка!'
 i18n['en']['follow']='-->ok'
 def followHandler(user,command,args,mess):
     if args not in ["magos","mageia"]: return "error"
-    to_users[user.getStripped()]=user.getStripped()
-    forum_use[user.getStripped()]=args
-    if os.path.isfile(pref_file_name1):
-        with open(pref_file_name1, 'w') as pref_file:
-            json.dump(forum_use,pref_file)
-    if os.path.isfile(pref_file_name2):
-        with open(pref_file_name2, 'w') as pref_file:
-            json.dump(to_users,pref_file)
+    #to_users[user.getStripped()]=user.getStripped()
+    #forum_use[user.getStripped()]=args
+    if not users_params.has_key(user.getStripped()):
+        users_params[user.getStripped()]={}
+
+    if not users_params[user.getStripped()].has_key('tfrm'):
+        users_params[user.getStripped()]['tfrm']="3"
+
+    users_params[user.getStripped()]['jid']=user.getStripped()
+    users_params[user.getStripped()]['forum']=args
+
+#   if os.path.isfile(pref_file_name1):
+#       with open(pref_file_name1, 'w') as pref_file:
+#           json.dump(forum_use,pref_file)
+#   if os.path.isfile(pref_file_name2):
+#       with open(pref_file_name2, 'w') as pref_file:
+#           json.dump(to_users,pref_file)
+    if os.path.isfile(pref_file_name):
+        with open(pref_file_name, 'w') as pref_file:
+            json.dump(users_params,pref_file)
     return "follow"
 
 
 i18n['en']['unfollow']='-->ok'
 def unfollowHandler(user,command,args,mess):
-    to_users.pop(user.getStripped())
-    forum_use.pop(user.getStripped())
-    if os.path.isfile(pref_file_name1):
-        with open(pref_file_name1, 'w') as pref_file:
-            json.dump(forum_use,pref_file)
-    if os.path.isfile(pref_file_name2):
-        with open(pref_file_name2, 'w') as pref_file:
-            json.dump(to_users,pref_file)
+#   to_users.pop(user.getStripped())
+#   forum_use.pop(user.getStripped())
+#   if os.path.isfile(pref_file_name1):
+#       with open(pref_file_name1, 'w') as pref_file:
+#           json.dump(forum_use,pref_file)
+#   if os.path.isfile(pref_file_name2):
+#       with open(pref_file_name2, 'w') as pref_file:
+#           json.dump(to_users,pref_file)
+    users_params.pop(user.getStripped())
+    if os.path.isfile(pref_file_name):
+        with open(pref_file_name, 'w') as pref_file:
+            json.dump(users_params,pref_file)
     return "unfollow"
 
 i18n['en']['empty']='--> отправлено'
 def emptyHandler(user,command,args,mess):
-    if forum_use.has_key(user.getStripped()):
-        Send2Chat(user.getStripped()+" "+command+" "+args,18,forum_use[user.getStripped()])
-    return "empty"
+    if users_params.has_key(user.getStripped()):
+        Send2Chat(user.getStripped()+" "+command+" "+args,18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
+#    return "empty"
 
 i18n['en']['bash']='%s'
 def bashHandler(user,command,args,mess):
@@ -160,10 +179,22 @@ def bashHandler(user,command,args,mess):
         bash_body="упс... ошибочка вышла!"
         pass
     return "bash",bash_body.replace("<br />","\n")
+
 i18n['en']['system']='%s'
 def systemHandler(user,command,args,mess):
     if args == params['system']['shutdown']:
         sys.exit()
+    par=args.split(" ")
+    if par[0]=="time":
+        try:
+            if int(par[1])>=0 and int(par[1])<6:
+                users_params[user.getStripped()]['tfrm']=par[1]
+                if os.path.isfile(pref_file_name):
+                    with open(pref_file_name, 'w') as pref_file:
+                        json.dump(users_params,pref_file)
+                return "system","-->ok"
+        except:
+            pass
     return "system",u"упс... ошибочка!"
 
 ########################### user handlers stop ###################################
@@ -185,8 +216,8 @@ def messageCB(conn,mess):
         reply=commands[cmd](user,command,args,mess)
     else:
         reply=("UNKNOWN COMMAND",cmd)
-        if to_users.has_key(user.getStripped()):
-            if to_users[user.getStripped()] :
+        if users_params.has_key(user.getStripped()):
+            if users_params[user.getStripped()]['jid'] :
                 reply=commands['empty'](user,command,args,mess)
             else: reply=("UNKNOWN COMMAND",cmd)
 
@@ -221,11 +252,11 @@ def StepOn(conn):
 
         #Основной код
 
-        msg=Send2Chat('',18,forum_magos)
+        msg=Send2Chat('',18,forum_magos,3)
         parser = MyHTMLParser()
         parser.feed( msg.split('|:|')[0])
         msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-        msg=Send2Chat('',18,forum_mageia)
+        msg=Send2Chat('',18,forum_mageia,3)
         parser = MyHTMLParser()
         parser.feed( msg.split('|:|')[0])
         msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
@@ -239,12 +270,21 @@ def StepOn(conn):
                 jid_full="%s/%s"%(jid,resources)
                 online_jab[jid]=str(conn.Roster.getShow(jid_full)==None and "online" or conn.Roster.getShow(jid_full))
 
-        for users in to_users:
-            if forum_use.has_key(users):
-                if (old_msg[forum_use[users]] != msg_chat[forum_use[users]]):
+        for users in users_params:
+            msg=Send2Chat('',18,forum_magos,users_params[users]['tfrm'])
+            parser = MyHTMLParser()
+            parser.feed( msg.split('|:|')[0])
+            msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            msg=Send2Chat('',18,forum_mageia,users_params[users]['tfrm'])
+            parser = MyHTMLParser()
+            parser.feed( msg.split('|:|')[0])
+            msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+
+            if (old_msg[users_params[users]['forum']] != msg_chat[users_params[users]['forum']]):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
-                    conn.Roster.Authorize(to_users[users])
-                    conn.send(xmpp.protocol.Message(to_users[users], msg_chat[forum_use[users]],'chat'))
+                    conn.Roster.Authorize(users_params[users]['jid'])
+                    conn.Roster.Subscribe(users_params[users]['jid'])
+                    conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat[users_params[users]['forum']],'chat'))
 
 #Обработчик для чата
         if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
@@ -258,7 +298,7 @@ def StepOn(conn):
             except:
                 bash_body=u"упс... ошибочка вышла!"
                 pass
-            Send2Chat(bash_body.replace("<br />","\n"),18,forum_magos)
+            Send2Chat(bash_body.replace("<br />","\n"),18,forum_magos,3)
 
     # надо оптимизировать код
         if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
@@ -272,7 +312,7 @@ def StepOn(conn):
             except:
                 bash_body=u"упс... ошибочка вышла!"
                 pass
-            Send2Chat(bash_body.replace("<br />","\n"),18,forum_mageia)
+            Send2Chat(bash_body.replace("<br />","\n"),18,forum_mageia,3)
 
 
 
@@ -314,17 +354,23 @@ else:
     conn.RegisterHandler('message',messageCB)
     conn.sendInitPresence()
     print "Bot started."
-    if os.path.isfile(pref_file_name1):
-        with open(pref_file_name1, 'r') as pref_file:
-            try:
-                forum_use = json.load(pref_file)
-            except:
-                pass
+#   if os.path.isfile(pref_file_name1):
+#       with open(pref_file_name1, 'r') as pref_file:
+#           try:
+#               forum_use = json.load(pref_file)
+#           except:
+#               pass
 
-    if os.path.isfile(pref_file_name2):
-        with open(pref_file_name2, 'r') as pref_file:
+#   if os.path.isfile(pref_file_name2):
+#       with open(pref_file_name2, 'r') as pref_file:
+#           try:
+#               to_users = json.load(pref_file)
+#           except:
+#               pass
+    if os.path.isfile(pref_file_name):
+        with open(pref_file_name, 'r') as pref_file:
             try:
-                to_users = json.load(pref_file)
+                users_params = json.load(pref_file)
             except:
                 pass
     if os.path.isfile(params_file_name):

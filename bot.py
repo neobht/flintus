@@ -118,7 +118,8 @@ def onlineHandler(user,command,args,mess):
 
     online_ret=""
     for online in online_jab:
-        online_ret=online_ret+online+"("+online_jab[online]+"), "
+        if online_jab[online]!="":
+            online_ret=online_ret+online+"("+online_jab[online]+"), "
 
     return "send",(online_ret,online_chat)
 
@@ -262,8 +263,8 @@ def StepOn(conn):
         msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
 
     #TODO: надо переделать как-то получше этот кусок
-	for k in online_jab:
-		online_jab[k]=""
+        for k in online_jab:
+            online_jab[k]=""
 
         for jid in conn.Roster.getItems():
             for resources in conn.Roster.getResources(jid):
@@ -274,19 +275,19 @@ def StepOn(conn):
             msg=Send2Chat('',18,users_params[users]['forum'],users_params[users]['tfrm'])
             parser = MyHTMLParser()
             parser.feed( msg.split('|:|')[0])
-	    msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
 
-	    if old_msg_users.has_key(users):
-		if old_msg_users[users].has_key(users_params[users]['forum']):
-            		if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users):
+            if old_msg_users.has_key(users):
+                if old_msg_users[users].has_key(users_params[users]['forum']):
+                    if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
-                    		conn.Roster.Authorize(users_params[users]['jid'])
-                    		conn.Roster.Subscribe(users_params[users]['jid'])
-                    		conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
-	    else:
-		old_msg_users[users]={}
-	    
-	    old_msg_users[users][users_params[users]['forum']]=msg_chat_users
+                        conn.Roster.Authorize(users_params[users]['jid'])
+                        conn.Roster.Subscribe(users_params[users]['jid'])
+                        conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
+            else:
+                old_msg_users[users]={}
+
+            old_msg_users[users][users_params[users]['forum']]=msg_chat_users
 
 #Обработчик для чата
         if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):

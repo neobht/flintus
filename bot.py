@@ -40,13 +40,17 @@ def Send2Chat(msg,clr,forum,tfrm="3"):
     params[forum]['txt_c']=clr
     params[forum]['tfrm']=tfrm
 
-    conn = httplib.HTTPConnection(server[forum])
-    conn.request("POST", "/ajb.php", urllib.urlencode(params[forum]), headers)
-    response = conn.getresponse()
+    try:
+        conn = httplib.HTTPConnection(server[forum])
+        conn.request("POST", "/ajb.php", urllib.urlencode(params[forum]), headers)
+        response = conn.getresponse()
     #print response.status, response.reason
-    data = response.read()
-    return data
-    conn.close()
+        data = response.read()
+        return data
+        conn.close()
+    except:
+        print "Error connecting to Blab Chat."
+        return "error"
 
 ###  Глобальные переменные
 params={}
@@ -82,6 +86,7 @@ def helpHandler(user,command,args,mess):
 follow magos/mageia - включить отслеживание форума
 unfollow - отключить отслеживание
 gethistory 1-20  - показать историю последних сообщений
+system time 0-5   - установить формат вывода даты и времени сообщений чата
 online - показать пользователей online
 bash 0-99 - показать последнюю 0-99 цитату с http://bash.im
 help - справка по командам
@@ -254,10 +259,12 @@ def StepOn(conn):
         #Основной код
 
         msg=Send2Chat('',18,forum_magos,3)
+        if msg=="error": return
         parser = MyHTMLParser()
         parser.feed( msg.split('|:|')[0])
         msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
         msg=Send2Chat('',18,forum_mageia,3)
+        if msg=="error": return
         parser = MyHTMLParser()
         parser.feed( msg.split('|:|')[0])
         msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
@@ -273,6 +280,7 @@ def StepOn(conn):
 
         for users in users_params:
             msg=Send2Chat('',18,users_params[users]['forum'],users_params[users]['tfrm'])
+            if msg=="error": return
             parser = MyHTMLParser()
             parser.feed( msg.split('|:|')[0])
             msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]

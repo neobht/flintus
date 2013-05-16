@@ -257,17 +257,20 @@ def StepOn(conn):
         conn.Process(1)
 
         #Основной код
-
-        msg=Send2Chat('',18,forum_magos,3)
-        if msg=="error": return
-        parser = MyHTMLParser()
-        parser.feed( msg.split('|:|')[0])
-        msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-        msg=Send2Chat('',18,forum_mageia,3)
-        if msg=="error": return
-        parser = MyHTMLParser()
-        parser.feed( msg.split('|:|')[0])
-        msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+        try:
+            msg=Send2Chat('',18,forum_magos,3)
+            if msg=="error": return
+            parser = MyHTMLParser()
+            parser.feed( msg.split('|:|')[0])
+            msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            msg=Send2Chat('',18,forum_mageia,3)
+            if msg=="error": return
+            parser = MyHTMLParser()
+            parser.feed( msg.split('|:|')[0])
+            msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+        except:
+            print "Error get Data from Blab-Chat"
+            return
 
     #TODO: надо переделать как-то получше этот кусок
         for k in online_jab:

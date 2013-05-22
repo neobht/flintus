@@ -284,7 +284,7 @@ def StepOn(conn):
 
         for users in users_params:
             msg=Send2Chat('',18,users_params[users]['forum'],users_params[users]['tfrm'])
-            if msg=="error": return
+            if msg=="error": return 1
             parser = MyHTMLParser()
             parser.feed( msg.split('|:|')[0])
             msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]

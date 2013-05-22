@@ -271,7 +271,7 @@ def StepOn(conn):
             msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
         except:
             print "Error get Data from Blab-Chat"
-            return
+            return 1
 
     #TODO: надо переделать как-то получше этот кусок
         for k in online_jab:

@@ -174,7 +174,7 @@ def unfollowHandler(user,command,args,mess):
 i18n['en']['empty']=''
 def emptyHandler(user,command,args,mess):
     if users_params.has_key(user.getStripped()):
-        #Send2Chat(user.getStripped()+" "+command+" "+args,18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
+        Send2Chat(user.getStripped()+" "+command+" "+args,18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
         pass
     return "empty"
 

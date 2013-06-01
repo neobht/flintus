@@ -188,6 +188,17 @@ def bashHandler(user,command,args,mess):
         pass
     return "bash",bash_body.replace("<br />","\n")
 
+i18n['en']['bf']='%s'
+def bfHandler(user,command,args,mess):
+    try:
+	arg=args.split(":")
+	feed=feedparser.parse("http://blogs.yandex.ru/search.rss?text="+arg[0]+"&ft=all&holdres=mark")
+        bf_body=feed['items'][arg[1] and ((int(arg[1])<len(feed['items'])) and int(arg[1]) or 99) or 0]['summary']
+    except:
+        bf_body="упс... ошибочка вышла!"
+        pass
+    return "bf",bf_body.replace("<br />","\n")
+
 i18n['en']['system']='%s'
 def systemHandler(user,command,args,mess):
     if args == params['system']['shutdown']:

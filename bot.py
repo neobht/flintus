@@ -191,6 +191,7 @@ def bashHandler(user,command,args,mess):
 i18n['en']['bf']='%s'
 def bfHandler(user,command,args,mess):
     try:
+	args=args+":"
 	arg=args.split(":")
 	feed=feedparser.parse("http://blogs.yandex.ru/search.rss?text="+arg[0]+"&ft=all&holdres=mark")
         bf_body=feed['items'][arg[1] and ((int(arg[1])<len(feed['items'])) and int(arg[1]) or 99) or 0]['summary']

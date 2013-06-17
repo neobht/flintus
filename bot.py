@@ -34,7 +34,7 @@ def Send2Chat(msg,clr,forum,tfrm="3"):
     headers = {"Content-type": "application/x-www-form-urlencoded"}
     server={}
     server['magos']="chat.magos-linux.ru"
-    server['mageia']="chat.mageialinux.ru"
+#    server['mageia']="chat.mageialinux.ru"
 
     params[forum]['cp']=msg.encode('utf-8')
     params[forum]['txt_c']=clr
@@ -57,7 +57,7 @@ params={}
 params_file_name="config_params"
 
 forum_magos="magos"
-forum_mageia="mageia"
+#forum_mageia="mageia"
 
 old_msg={}
 msg_chat={}
@@ -65,8 +65,8 @@ old_msg_users={}
 
 old_msg[forum_magos]=""
 msg_chat[forum_magos]=""
-old_msg[forum_mageia]=""
-msg_chat[forum_mageia]=""
+#old_msg[forum_mageia]=""
+#msg_chat[forum_mageia]=""
 
 #to_users={}
 #forum_use={}
@@ -131,7 +131,8 @@ def onlineHandler(user,command,args,mess):
 i18n['en']['error']=u'-->упс... ошибочка!'
 i18n['en']['follow']='-->ok'
 def followHandler(user,command,args,mess):
-    if args not in ["magos","mageia"]: return "error"
+    if args not in ["magos"]: return "error"
+#    if args not in ["magos","mageia"]: return "error"
     #to_users[user.getStripped()]=user.getStripped()
     #forum_use[user.getStripped()]=args
     if not users_params.has_key(user.getStripped()):
@@ -276,11 +277,11 @@ def StepOn(conn):
             parser = MyHTMLParser()
             parser.feed( msg.split('|:|')[0])
             msg_chat[forum_magos]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-            msg=Send2Chat('',18,forum_mageia,3)
-            if msg=="error": return 1
-            parser = MyHTMLParser()
-            parser.feed( msg.split('|:|')[0])
-            msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            #msg=Send2Chat('',18,forum_mageia,3)
+            #if msg=="error": return 1
+            #parser = MyHTMLParser()
+            #parser.feed( msg.split('|:|')[0])
+            #msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
         except:
             print "Error get Data from Blab-Chat"
             return 1
@@ -314,32 +315,32 @@ def StepOn(conn):
             old_msg_users[users][users_params[users]['forum']]=msg_chat_users
 
 #Обработчик для чата
-        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
-            feed=feedparser.parse("http://bash.im/rss")
-            try:
-                try:
-                    args=msg_chat[forum_magos].split(" ")[5]
-                except:
-                    args="0"
-                bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
-            except:
-                bash_body=u"упс... ошибочка вышла!"
-                pass
-            Send2Chat(bash_body.replace("<br />","\n"),18,forum_magos,3)
+#        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
+#            feed=feedparser.parse("http://bash.im/rss")
+#            try:
+#                try:
+#                    args=msg_chat[forum_magos].split(" ")[5]
+#                except:
+#                    args="0"
+#                bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+#            except:
+#                bash_body=u"упс... ошибочка вышла!"
+#                pass
+#            Send2Chat(bash_body.replace("<br />","\n"),18,forum_magos,3)
 
     # надо оптимизировать код
-        if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
-            feed=feedparser.parse("http://bash.im/rss")
-            try:
-                try:
-                    args=msg_chat[forum_mageia].split(" ")[5]
-                except:
-                    args="0"
-                bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
-            except:
-                bash_body=u"упс... ошибочка вышла!"
-                pass
-            Send2Chat(bash_body.replace("<br />","\n"),18,forum_mageia,3)
+#        if ("‹@Flintus› bash" in msg_chat[forum_mageia])and(old_msg[forum_mageia] != msg_chat[forum_mageia]):
+#            feed=feedparser.parse("http://bash.im/rss")
+#            try:
+#                try:
+#                    args=msg_chat[forum_mageia].split(" ")[5]
+#                except:
+#                    args="0"
+#                bash_body=feed['items'][args and ((int(args)<len(feed['items'])) and int(args) or 99) or 0]['summary']
+#            except:
+#                bash_body=u"упс... ошибочка вышла!"
+#                pass
+#            Send2Chat(bash_body.replace("<br />","\n"),18,forum_mageia,3)
 
 
 
@@ -350,7 +351,7 @@ def StepOn(conn):
 #       Send2Chat("MRC Forum "+msg_chat[forum_mageia],18,forum_magos)
 
         old_msg[forum_magos]=msg_chat[forum_magos]
-        old_msg[forum_mageia]=msg_chat[forum_mageia]
+#        old_msg[forum_mageia]=msg_chat[forum_mageia]
 
     except KeyboardInterrupt: return 0
     return 1

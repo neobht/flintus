@@ -192,9 +192,9 @@ def bashHandler(user,command,args,mess):
 i18n['en']['bf']='%s'
 def bfHandler(user,command,args,mess):
     try:
-	args=args+":"
-	arg=args.split(":")
-	feed=feedparser.parse("http://blogs.yandex.ru/search.rss?text="+arg[0]+"&ft=all&holdres=mark")
+        args=args+":"
+        arg=args.split(":")
+        feed=feedparser.parse("http://blogs.yandex.ru/search.rss?text="+arg[0]+"&ft=all&holdres=mark")
         bf_body=feed['items'][arg[1] and ((int(arg[1])<len(feed['items'])) and int(arg[1]) or 99) or 0]['summary']
     except:
         bf_body="упс... ошибочка вышла!"
@@ -304,7 +304,7 @@ def StepOn(conn):
 
             if old_msg_users.has_key(users):
                 if old_msg_users[users].has_key(users_params[users]['forum']):
-                    if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users):
+                    if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users) and (online_jab[users_params[users]['jid']]=='online' ):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
                         conn.Roster.Authorize(users_params[users]['jid'])
                         conn.Roster.Subscribe(users_params[users]['jid'])

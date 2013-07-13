@@ -304,7 +304,7 @@ def StepOn(conn):
 
             if old_msg_users.has_key(users):
                 if old_msg_users[users].has_key(users_params[users]['forum']):
-                    if online_jab.has_key(users_params[users]['jid'].encode("utf-8")):
+                    if online_jab.has_key(users_params[users]['jid'].decode("utf-8")):
                         if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users) and (online_jab[users_params[users]['jid']]=="online" ):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
                             conn.Roster.Authorize(users_params[users]['jid'])

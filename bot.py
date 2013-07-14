@@ -304,11 +304,11 @@ def StepOn(conn):
 
             if old_msg_users.has_key(users):
                 if old_msg_users[users].has_key(users_params[users]['forum']):
-                    if online_jab.has_key(users_params[users]['jid'].decode("utf-8")):
-                        if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users) and (online_jab[users_params[users]['jid']]=="online" ):
+                    if (old_msg_users[users][users_params[users]['forum']] != msg_chat_users):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
-                            conn.Roster.Authorize(users_params[users]['jid'])
-                            conn.Roster.Subscribe(users_params[users]['jid'])
+                        conn.Roster.Authorize(users_params[users]['jid'])
+                        conn.Roster.Subscribe(users_params[users]['jid'])
+                        if online_jab.has_key(users_params[users]['jid'].decode("utf-8")) and (online_jab[users_params[users]['jid']]=="online" ):
                             conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
 
             else:

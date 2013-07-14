@@ -308,8 +308,8 @@ def StepOn(conn):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
                         conn.Roster.Authorize(users_params[users]['jid'])
                         conn.Roster.Subscribe(users_params[users]['jid'])
-                        if online_jab.has_key(users_params[users]['jid'].decode("utf-8")) and (online_jab[users_params[users]['jid']]=="online" ):
-                            conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
+#                        if online_jab.has_key(users_params[users]['jid'].decode("utf-8")) and (online_jab[users_params[users]['jid']]=="online" ):
+                        conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users+"["+online_jab[users_params[users]['jid']]+"]",'chat'))
 
             else:
                 old_msg_users[users]={}

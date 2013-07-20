@@ -296,11 +296,15 @@ def StepOn(conn):
                 online_jab[jid]=str(conn.Roster.getShow(jid_full)==None and "online" or conn.Roster.getShow(jid_full))
 
         for users in users_params:
-            msg=Send2Chat('',18,users_params[users]['forum'],users_params[users]['tfrm'])
-            if msg=="error": return 1
-            parser = MyHTMLParser()
-            parser.feed( msg.split('|:|')[0])
-            msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            try:
+                msg=Send2Chat('',18,users_params[users]['forum'],users_params[users]['tfrm'])
+                if msg=="error": return 1
+                parser = MyHTMLParser()
+                parser.feed( msg.split('|:|')[0])
+                msg_chat_users=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            except:
+                print "Error get data for users"
+                return 1
 
             if old_msg_users.has_key(users):
                 if old_msg_users[users].has_key(users_params[users]['forum']):
@@ -308,8 +312,8 @@ def StepOn(conn):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
                         conn.Roster.Authorize(users_params[users]['jid'])
                         conn.Roster.Subscribe(users_params[users]['jid'])
-                        if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")]=="online" ):
-                            conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
+#                        if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")]=="online" ):
+                        conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
 
             else:
                 old_msg_users[users]={}

@@ -352,7 +352,7 @@ def StepOn(conn):
 #   if (old_msg[forum_mageia] != msg_chat[forum_mageia]) and ('Flintus:' not in msg_chat[forum_mageia]) and echo:
 #       Send2Chat("MRC Forum "+msg_chat[forum_mageia],18,forum_magos)
 
-        old_msg[forum_magos]=msg_chat[forum_magos]
+#        old_msg[forum_magos]=msg_chat[forum_magos]
 #        old_msg[forum_mageia]=msg_chat[forum_mageia]
 
     except KeyboardInterrupt: return 0

@@ -75,6 +75,8 @@ msg_chat[forum_magos]=""
 users_params={}
 pref_file_name="users_params"
 online_jab={}
+online_chat_users=""
+old_online_chat_users=""
 
 commands={}
 i18n={'ru':{},'en':{}}
@@ -282,6 +284,10 @@ def StepOn(conn):
             #parser = MyHTMLParser()
             #parser.feed( msg.split('|:|')[0])
             #msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
+            msg=Send2Chat('',18,forum_magos,3)
+            parser = MyHTMLParser()
+            parser.feed( msg.split('|:|')[1])
+            online_chat_users=parser.get_data()
         except:
             print "Error get Data from Blab-Chat"
             return 1
@@ -319,6 +325,10 @@ def StepOn(conn):
                 old_msg_users[users]={}
 
             old_msg_users[users][users_params[users]['forum']]=msg_chat_users
+
+        if (old_online_chat_users!=online_chat_users):
+            Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
+            old_online_chat_users=online_chat_users
 
 #Обработчик для чата
 #        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):

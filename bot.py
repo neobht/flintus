@@ -301,6 +301,8 @@ def StepOn(conn):
             for resources in conn.Roster.getResources(jid):
                 jid_full="%s/%s"%(jid,resources)
                 online_jab[jid]=str(conn.Roster.getShow(jid_full)==None and "online" or conn.Roster.getShow(jid_full))
+                if online_jab[jid]=="online":
+                    online_jabber=online_jabber+" "+jid
 
         for users in users_params:
             try:
@@ -321,7 +323,6 @@ def StepOn(conn):
                         conn.Roster.Subscribe(users_params[users]['jid'])
                         if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")]=="online" ):
                             conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
-                            online_jabber=online_jabber+" "+users_params[users]['jid']
 
             else:
                 old_msg_users[users]={}

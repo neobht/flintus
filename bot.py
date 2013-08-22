@@ -271,6 +271,7 @@ for i in globals().keys():
 
 def StepOn(conn):
     global old_online_chat_users
+    global online_chat_users
     try:
         conn.Process(1)
 
@@ -288,11 +289,11 @@ def StepOn(conn):
             #msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
             msg=Send2Chat('',18,forum_magos,3)
             parser = MyHTMLParser()
-            parser.feed( msg.split('|:|')[1])
+            parser.feed(msg.split('|:|')[1])
             online_chat_users=parser.get_data()
             if (old_online_chat_users!=online_chat_users):
                 Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
-                old_online_chat_users=online_chat_users
+            old_online_chat_users=online_chat_users
 
         except:
             print "Error get Data from Blab-Chat"

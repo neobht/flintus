@@ -272,6 +272,7 @@ for i in globals().keys():
 def StepOn(conn):
     global old_online_chat_users
     global online_chat_users
+    online_jabber=""
     try:
         conn.Process(1)
 
@@ -287,14 +288,6 @@ def StepOn(conn):
             #parser = MyHTMLParser()
             #parser.feed( msg.split('|:|')[0])
             #msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
-            msg=Send2Chat('',18,forum_magos,3)
-            if msg=="error": return 1
-            parser = MyHTMLParser()
-            parser.feed(msg.split('|:|')[1])
-            online_chat_users=parser.get_data()
-            if (old_online_chat_users!=online_chat_users):
-                Send2Chat("=====   %s   ====="%(online_chat_users),18,forum_magos,3)
-                old_online_chat_users=online_chat_users
 
         except:
             print "Error get Data from Blab-Chat"
@@ -328,6 +321,7 @@ def StepOn(conn):
                         conn.Roster.Subscribe(users_params[users]['jid'])
                         if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")]=="online" ):
                             conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
+                            online_jabber=online_jabber+" "+users_params[users]['jid']
 
             else:
                 old_msg_users[users]={}
@@ -335,6 +329,19 @@ def StepOn(conn):
             old_msg_users[users][users_params[users]['forum']]=msg_chat_users
 
 #Обработчик для чата
+        try:
+            msg=Send2Chat('',18,forum_magos,3)
+            if msg=="error": return 1
+            parser = MyHTMLParser()
+            parser.feed(msg.split('|:|')[1])
+            online_chat_users="%s %s"%(parser.get_data(),str(online_jabber))
+            if (old_online_chat_users!=online_chat_users):
+                Send2Chat("=====   %s   ====="%(online_chat_users),18,forum_magos,3)
+                old_online_chat_users=online_chat_users
+
+        except:
+            print "Error get online_users from Blab-Chat"
+            return 1
 #        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):
 #            feed=feedparser.parse("http://bash.im/rss")
 #            try:

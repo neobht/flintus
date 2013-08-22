@@ -319,13 +319,14 @@ def StepOn(conn):
                 #and    ("Flintus:" not in msg_chat[forum_use[users]]):
                         conn.Roster.Authorize(users_params[users]['jid'])
                         conn.Roster.Subscribe(users_params[users]['jid'])
-                        #if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")]=="online" ):
-                        conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
+                        if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")] in ["online","chat"] ):
+                            conn.send(xmpp.protocol.Message(users_params[users]['jid'], msg_chat_users,'chat'))
 
             else:
                 old_msg_users[users]={}
 
-            if online_jab[users_params[users]['jid']] in ["online","chat"]:
+            if online_jab.has_key(users_params[users]['jid'].strip(" ").decode("utf-8")) and (online_jab[users_params[users]['jid'].strip(" ").decode("utf-8")] in ["online","chat"] ):
+            #if online_jab[users_params[users]['jid']] in ["online","chat"]:
                 online_jabber=online_jabber+" "+users_params[users]['jid']
 
             old_msg_users[users][users_params[users]['forum']]=msg_chat_users
@@ -338,7 +339,7 @@ def StepOn(conn):
             parser.feed(msg.split('|:|')[1])
             online_chat_users="%s %s"%(parser.get_data(),str(online_jabber))
             if (old_online_chat_users!=online_chat_users):
-                Send2Chat("=====   %s   ====="%(online_chat_users),18,forum_magos,3)
+                Send2Chat("=====   %s   ====="%(online_chat_users),40,forum_magos,3)
                 old_online_chat_users=online_chat_users
 
         except:

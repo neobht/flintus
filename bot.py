@@ -288,12 +288,13 @@ def StepOn(conn):
             #parser.feed( msg.split('|:|')[0])
             #msg_chat[forum_mageia]=parser.get_data().split(msg.split('|:|')[2]+":|:")[1]
             msg=Send2Chat('',18,forum_magos,3)
+            if msg=="error": return 1
             parser = MyHTMLParser()
             parser.feed(msg.split('|:|')[1])
             online_chat_users=parser.get_data()
             if (old_online_chat_users!=online_chat_users):
-                Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
-            old_online_chat_users=online_chat_users
+                Send2Chat("=====   %s   ====="%(online_chat_users),18,forum_magos,3)
+                old_online_chat_users=online_chat_users
 
         except:
             print "Error get Data from Blab-Chat"

@@ -270,6 +270,7 @@ for i in globals().keys():
 ############################# bot logic stop #####################################
 
 def StepOn(conn):
+    global old_online_chat_users
     try:
         conn.Process(1)
 
@@ -289,6 +290,10 @@ def StepOn(conn):
             parser = MyHTMLParser()
             parser.feed( msg.split('|:|')[1])
             online_chat_users=parser.get_data()
+            if (old_online_chat_users!=online_chat_users):
+                Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
+                old_online_chat_users=online_chat_users
+
         except:
             print "Error get Data from Blab-Chat"
             return 1
@@ -326,10 +331,6 @@ def StepOn(conn):
                 old_msg_users[users]={}
 
             old_msg_users[users][users_params[users]['forum']]=msg_chat_users
-
-        #if (old_online_chat_users!=online_chat_users):
-        #    Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
-        #old_online_chat_users=online_chat_users
 
 #Обработчик для чата
 #        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):

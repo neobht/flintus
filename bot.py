@@ -75,6 +75,7 @@ msg_chat[forum_magos]=""
 users_params={}
 pref_file_name="users_params"
 online_jab={}
+
 online_chat_users=""
 old_online_chat_users=""
 
@@ -326,9 +327,9 @@ def StepOn(conn):
 
             old_msg_users[users][users_params[users]['forum']]=msg_chat_users
 
-        if (old_online_chat_users!=online_chat_users):
-            Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
-            old_online_chat_users=online_chat_users
+        #if (old_online_chat_users!=online_chat_users):
+        #    Send2Chat("Изменение активности: "+online_chat_users,18,forum_magos,3)
+        #old_online_chat_users=online_chat_users
 
 #Обработчик для чата
 #        if ("‹@Flintus› bash" in msg_chat[forum_magos])and(old_msg[forum_magos] != msg_chat[forum_magos]):

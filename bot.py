@@ -339,7 +339,7 @@ def StepOn(conn):
             parser.feed(msg.split('|:|')[1])
             online_chat_users="%s %s"%(parser.get_data(),str(online_jabber))
             if (old_online_chat_users!=online_chat_users):
-                Send2Chat("=====   %s   ====="%(online_chat_users),40,forum_magos,3)
+                Send2Chat("=====   %s   ====="%(online_chat_users),130,forum_magos,3)
                 old_online_chat_users=online_chat_users
 
         except:

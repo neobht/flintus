@@ -134,6 +134,7 @@ def onlineHandler(user,command,args,mess):
 i18n['en']['error']=u'-->упс... ошибочка!'
 i18n['en']['follow']='-->ok'
 def followHandler(user,command,args,mess):
+    global users_params
     if args not in ["magos"]: return "error"
 #    if args not in ["magos","mageia"]: return "error"
     #to_users[user.getStripped()]=user.getStripped()
@@ -161,6 +162,7 @@ def followHandler(user,command,args,mess):
 
 i18n['en']['unfollow']='-->ok'
 def unfollowHandler(user,command,args,mess):
+    global users_params
 #   to_users.pop(user.getStripped())
 #   forum_use.pop(user.getStripped())
 #   if os.path.isfile(pref_file_name1):
@@ -206,6 +208,7 @@ def bfHandler(user,command,args,mess):
 
 i18n['en']['system']='%s'
 def systemHandler(user,command,args,mess):
+    global users_params
     if args == params['system']['shutdown']:
         sys.exit()
     par=args.split(" ")

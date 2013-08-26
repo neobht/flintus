@@ -180,7 +180,7 @@ def unfollowHandler(user,command,args,mess):
 i18n['en']['empty']=''
 def emptyHandler(user,command,args,mess):
     if users_params.has_key(user.getStripped()):
-        Send2Chat(user.getStripped()+" "+command+" "+args,18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
+        Send2Chat(user.getStripped()+" "+command+" "+args,users_params[user.getStripped()].has_key('color') and users_params[user.getStripped()]['color'] or 18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
         pass
     return "empty"
 
@@ -216,6 +216,16 @@ def systemHandler(user,command,args,mess):
         try:
             if int(par[1])>=0 and int(par[1])<6:
                 users_params[user.getStripped()]['tfrm']=par[1]
+                if os.path.isfile(pref_file_name):
+                    with open(pref_file_name, 'w') as pref_file:
+                        json.dump(users_params,pref_file)
+                return "system","-->ok"
+        except:
+            pass
+    if par[0]=="color":
+        try:
+            if int(par[1])>=0 and int(par[1])<255:
+                users_params[user.getStripped()]['color']=par[1]
                 if os.path.isfile(pref_file_name):
                     with open(pref_file_name, 'w') as pref_file:
                         json.dump(users_params,pref_file)

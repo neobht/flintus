@@ -76,8 +76,10 @@ users_params={}
 pref_file_name="users_params"
 online_jab={}
 
+history_file_name="history"
 online_chat_users=""
 old_online_chat_users=""
+count_times=0
 
 commands={}
 i18n={'ru':{},'en':{}}
@@ -86,14 +88,14 @@ i18n={'ru':{},'en':{}}
 i18n['ru']['Помощь']="Доступные команды: %s\n\nОписание команд:%s"
 def helpHandler(user,command,args,mess):
     info='''
-follow magos/mageia - включить отслеживание форума
+follow magos[mageia] - включить отслеживание форума
 unfollow - отключить отслеживание
 gethistory 1-20  - показать историю последних сообщений
 system time 0-5   - установить формат вывода даты и времени сообщений чата
 system color 0-255 - установить цвет текста для сообщения
 online - показать пользователей online
 bash 0-99 - показать последнюю 0-99 цитату с http://bash.im
-bf слово   - произвести поиск слова в Яндекс по форумам и блогам
+bf слово:N    - произвести поиск слова в Яндекс по форумам и блогам и вернуть N результатов
 help - справка по командам
     '''
 
@@ -101,6 +103,22 @@ help - справка по командам
     lst.remove('empty')
     lst.sort()
     return "Помощь",(', '.join(lst),info)
+
+i18n['en']['online_history']='%s'
+def online_historyHandler(user,command,args,mess):
+    if not users_params.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
+    if os.path.isfile(history_file_name):
+        with open(history_file_name, 'r') as history_file:
+            try:
+                try:
+                    history_file.seek(-500,2)
+                except:
+                    pass
+                online_history = history_file.read()
+            except:
+                online_history ="empty"
+                pass
+    return "online_history",'%s'%online_history
 
 i18n['en']['gethistory']='%s'
 def gethistoryHandler(user,command,args,mess):
@@ -120,7 +138,7 @@ def gethistoryHandler(user,command,args,mess):
 
 i18n['en']['send']='--> online jabber users:\n%s\n\n-->online chat users:\n%s'
 def onlineHandler(user,command,args,mess):
-    if not users_params.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos/mageia "
+    if not users_params.has_key(user.getStripped()): return "Необходимо отслеживать один из форумов: follow magos[mageia]"
     msg=Send2Chat('',18,users_params[user.getStripped()]['forum'],users_params[user.getStripped()]['tfrm'])
     parser = MyHTMLParser()
     parser.feed( msg.split('|:|')[1])
@@ -287,6 +305,7 @@ for i in globals().keys():
 def StepOn(conn):
     global old_online_chat_users
     global online_chat_users
+    global count_times
     online_jabber=""
     try:
         conn.Process(1)
@@ -354,8 +373,16 @@ def StepOn(conn):
             parser.feed(msg.split('|:|')[1])
             online_chat_users="%s %s"%(parser.get_data(),str(online_jabber))
             if (old_online_chat_users!=online_chat_users):
-                Send2Chat("=====   %s   ====="%(online_chat_users),130,forum_magos,3)
-                old_online_chat_users=online_chat_users
+                count_times=count_times+1
+                if count_times>(params.has_key('count_times') and params['count_times'] or 100):
+                    count_times=0
+                    #Send2Chat("=====   %s   ====="%(online_chat_users),130,forum_magos,3)
+                    old_online_chat_users=online_chat_users
+                    history="=====   %s   =====\n"%(online_chat_users)
+                    if os.path.isfile(history_file_name):
+                        with open(history_file_name, 'a') as history_file:
+                            history_file.write(history)
+
 
         except:
             print "Error get online_users from Blab-Chat"

@@ -21,11 +21,11 @@ Can be used both for client and transport authentication.
 
 from protocol import *
 from client import PlugIn
-import sha,base64,random,dispatcher,re
+import hashlib,base64,random,dispatcher,re
 
-import md5
-def HH(some): return md5.new(some).hexdigest()
-def H(some): return md5.new(some).digest()
+#import hashlib.md5
+def HH(some): return hashlib.md5.new(some).hexdigest()
+def H(some): return hashlib.md5.new(some).digest()
 def C(some): return ':'.join(some)
 
 class NonSASL(PlugIn):
@@ -54,15 +54,15 @@ class NonSASL(PlugIn):
 
         if query.getTag('digest'):
             self.DEBUG("Performing digest authentication",'ok')
-            query.setTagData('digest',sha.new(owner.Dispatcher.Stream._document_attrs['id']+self.password).hexdigest())
+            query.setTagData('digest',hashlib.sha.new(owner.Dispatcher.Stream._document_attrs['id']+self.password).hexdigest())
             if query.getTag('password'): query.delChild('password')
             method='digest'
         elif query.getTag('token'):
             token=query.getTagData('token')
             seq=query.getTagData('sequence')
             self.DEBUG("Performing zero-k authentication",'ok')
-            hash = sha.new(sha.new(self.password).hexdigest()+token).hexdigest()
-            for foo in xrange(int(seq)): hash = sha.new(hash).hexdigest()
+            hash = hashlib.sha.new(sha.new(self.password).hexdigest()+token).hexdigest()
+            for foo in xrange(int(seq)): hash = hashlib.sha.new(hash).hexdigest()
             query.setTagData('hash',hash)
             method='0k'
         else:
@@ -204,7 +204,7 @@ class SASL(PlugIn):
             node=Node('response',attrs={'xmlns':NS_SASL},payload=[base64.encodestring(sasl_data[:-1]).replace('\r','').replace('\n','')])
             self._owner.send(node.__str__())
         elif chal.has_key('rspauth'): self._owner.send(Node('response',attrs={'xmlns':NS_SASL}).__str__())
-        else: 
+        else:
             self.startsasl='failure'
             self.DEBUG('Failed SASL authentification: unknown challenge','error')
         raise NodeProcessed

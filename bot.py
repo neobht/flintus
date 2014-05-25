@@ -7,7 +7,7 @@
 ##  Description: Flintus - Chat/XMPP bot
 ##
 ##  Author: Anton Goroshkin <antihaos@gmail.com> http://magos-linux.ru
-##  Copyright (C) 2013 neobht
+##  Copyright (C) 2014 neobht
 
 
 import sys,os,json

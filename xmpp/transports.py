@@ -27,7 +27,7 @@ Transports are stackable so you - f.e. TLS use HTPPROXYsocket or TCPsocket as mo
 Also exception 'error' is defined to allow capture of this module specific exceptions.
 """
 
-import socket,select,base64,dispatcher,sys
+import ssl,socket,select,base64,dispatcher,sys
 from simplexml import ustr
 from client import PlugIn
 from protocol import *
@@ -63,7 +63,7 @@ class TCPsocket(PlugIn):
     """ This class defines direct TCP connection method. """
     def __init__(self, server=None, use_srv=True):
         """ Cache connection point 'server'. 'server' is the tuple of (host, port)
-            absolutely the same as standard tcp socket uses. However library will lookup for 
+            absolutely the same as standard tcp socket uses. However library will lookup for
             ('_xmpp-client._tcp.' + host) SRV record in DNS and connect to the found (if it is)
             server instead
         """
@@ -135,7 +135,7 @@ class TCPsocket(PlugIn):
             self._recv=self._sock.recv
             self.DEBUG("Successfully connected to remote host %s"%`server`,'start')
             return 'ok'
-        except socket.error, (errno, strerror): 
+        except socket.error, (errno, strerror):
             self.DEBUG("Failed to connect to remote host %s: %s (%s)"%(`server`, strerror, errno),'error')
         except: pass
 
@@ -313,6 +313,7 @@ class TLS(PlugIn):
         """ Here we should switch pending_data to hint mode."""
         tcpsock=self._owner.Connection
         tcpsock._sslObj    = socket.ssl(tcpsock._sock, None, None)
+        #tcpsock._sslObj    = ssl.wrap_socket(tcpsock._sock, None, None)
         tcpsock._sslIssuer = tcpsock._sslObj.issuer()
         tcpsock._sslServer = tcpsock._sslObj.server()
         tcpsock._recv = tcpsock._sslObj.read
